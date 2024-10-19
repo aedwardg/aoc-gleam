@@ -1,24 +1,9 @@
-# aoc
+# aoc-gleam
 
-[![Package Version](https://img.shields.io/hexpm/v/aoc)](https://hex.pm/packages/aoc)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/aoc/)
+Just trying out Advent of Code in Gleam.
 
-```sh
-gleam add aoc@1
-```
-```gleam
-import aoc
-
-pub fn main() {
-  // TODO: An example of the project in use
-}
-```
-
-Further documentation can be found at <https://hexdocs.pm/aoc>.
-
-## Development
+import the module you want in `aoc.gleam` and then run the code
 
 ```sh
 gleam run   # Run the project
-gleam test  # Run the tests
 ```
