@@ -32,8 +32,7 @@ pub fn run() {
 }
 
 fn sum_list(l) {
-  let assert Ok(sum) = list.reduce(l, fn(acc, i) { acc + i })
-
+  let assert Ok(sum) = list.reduce(l, int.add)
   sum
 }
 
@@ -45,7 +44,7 @@ fn part_one(input) {
   let assert Ok(max) =
     input
     |> sum_calories()
-    |> list.reduce(fn(acc, i) { int.max(acc, i) })
+    |> list.reduce(int.max)
 
   max
 }
