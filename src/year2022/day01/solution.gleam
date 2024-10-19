@@ -1,7 +1,6 @@
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/result
 import gleam/string
 import simplifile
 
@@ -15,8 +14,7 @@ pub fn run() {
     |> list.map(fn(s) {
       s
       |> string.split("\n")
-      |> list.filter(fn(s) { s != "" })
-      |> list.map(fn(s) { s |> int.parse() |> result.unwrap(0) })
+      |> list.filter_map(int.parse)
     })
 
   io.println("Part 1:")
@@ -31,13 +29,8 @@ pub fn run() {
   |> io.debug()
 }
 
-fn sum_list(l) {
-  let assert Ok(sum) = list.reduce(l, int.add)
-  sum
-}
-
 fn sum_calories(elves) {
-  list.map(elves, sum_list)
+  list.map(elves, int.sum)
 }
 
 fn part_one(input) {
@@ -55,5 +48,5 @@ fn part_two(input) {
     |> sum_calories()
     |> list.sort(fn(a, b) { int.compare(b, a) })
 
-  sum_list([e1, e2, e3])
+  int.sum([e1, e2, e3])
 }
