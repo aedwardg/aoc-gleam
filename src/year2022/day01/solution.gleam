@@ -7,7 +7,7 @@ import simplifile
 
 pub fn run() {
   io.println("Hello from day 1!")
-  let assert Ok(input) = simplifile.read("src/day01/input.txt")
+  let assert Ok(input) = simplifile.read("src/year2022/day01/input.txt")
 
   let input =
     input
