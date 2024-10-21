@@ -1,5 +1,5 @@
-import year2022/day01/solution
+import year2022/day02/solution2
 
 pub fn main() {
-  solution.run()
+  solution2.run()
 }
