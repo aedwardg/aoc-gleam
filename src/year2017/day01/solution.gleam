@@ -29,20 +29,11 @@ fn find_neighbors(input) {
 fn do_find_neighbors(list, first, neighbors) {
   let assert [h, ..t] = list
   case t {
-    [] -> {
-      case h == first {
-        True -> [to_int(h), ..neighbors]
-        False -> neighbors
-      }
-    }
-    tail -> {
-      let assert [second, ..rest] = tail
-      case h == second {
-        True ->
-          do_find_neighbors([second, ..rest], first, [to_int(h), ..neighbors])
-        False -> do_find_neighbors([second, ..rest], first, neighbors)
-      }
-    }
+    [] if h == first -> [to_int(h), ..neighbors]
+    [] -> neighbors
+    [second, ..rest] if h == second ->
+      do_find_neighbors([second, ..rest], first, [to_int(h), ..neighbors])
+    tail -> do_find_neighbors(tail, first, neighbors)
   }
 }
 
@@ -59,16 +50,12 @@ fn compare(list, comp) {
 fn do_compare(list, comp, matches) {
   case list, comp {
     [], [] -> matches
+    [f1, ..rest1], [f2, ..rest2] if f1 == f2 ->
+      do_compare(rest1, rest2, [to_int(f1), ..matches])
     l, c -> {
-      let assert [f1, ..rest1] = l
-      let assert [f2, ..rest2] = c
-
-      case f1 == f2 {
-        True -> {
-          do_compare(rest1, rest2, [to_int(f1), ..matches])
-        }
-        False -> do_compare(rest1, rest2, matches)
-      }
+      let assert [_, ..rest1] = l
+      let assert [_, ..rest2] = c
+      do_compare(rest1, rest2, matches)
     }
   }
 }
