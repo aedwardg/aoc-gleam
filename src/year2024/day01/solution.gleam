@@ -39,13 +39,9 @@ fn get_freqs(list) {
 fn part_one(input) {
   let assert [lefts, rights] = list.map(input, list.sort(_, int.compare))
 
-  let pairs = list.zip(lefts, rights)
-
-  list.fold(pairs, 0, fn(acc, pair) {
-    let #(left, right) = pair
-
-    acc + int.absolute_value(left - right)
-  })
+  lefts
+  |> list.zip(rights)
+  |> list.fold(0, fn(acc, pair) { acc + int.absolute_value(pair.0 - pair.1) })
 }
 
 fn part_two(input) {
