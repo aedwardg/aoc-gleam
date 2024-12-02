@@ -1,16 +1,21 @@
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/set
 import gleam/string
 
 import simplifile
+import utils.{Global, TrimAll}
+
+type Direction {
+  Increasing
+  Decreasing
+}
 
 fn parse() {
   let assert Ok(input) = simplifile.read("src/year2024/day02/input.txt")
 
   input
-  |> string.split("\n")
+  |> utils.erl_split("\n", [Global, TrimAll])
   |> list.map(fn(str) {
     str
     |> string.split(" ")
@@ -19,21 +24,20 @@ fn parse() {
 }
 
 fn check_for_safety(num_list) {
-  let pairs = list.window_by_2(num_list)
-
-  safe_distance(pairs) && all_asc_or_desc(pairs)
+  let assert [first, second, ..] = num_list
+  case int.absolute_value(first - second) {
+    1 | 2 | 3 if first < second -> do_check_for_safety(num_list, Increasing)
+    1 | 2 | 3 if first > second -> do_check_for_safety(num_list, Decreasing)
+    _ -> False
+  }
 }
 
-fn safe_distance(pairs: List(#(Int, Int))) {
-  list.all(pairs, fn(pair) { safe_value(pair.0, pair.1) })
-}
-
-fn all_asc_or_desc(pairs: List(#(Int, Int))) {
-  pairs
-  |> list.map(fn(pair) { int.compare(pair.0, pair.1) })
-  |> set.from_list()
-  |> set.size()
-  == 1
+fn do_check_for_safety(num_list, direction) {
+  let assert [first, ..rest] = num_list
+  case direction {
+    Increasing -> is_increasing(first, rest)
+    Decreasing -> is_decreasing(first, rest)
+  }
 }
 
 fn safe_value(a, b) {
@@ -41,11 +45,31 @@ fn safe_value(a, b) {
   dist > 0 && dist < 4
 }
 
-fn create_possibles(num_list: List(Int)) {
+fn is_increasing(first, rest) {
+  case rest {
+    [] -> True
+    [next, ..] if next < first -> False
+    [next, ..rem] -> safe_value(first, next) && is_increasing(next, rem)
+  }
+}
+
+fn is_decreasing(first, rest) {
+  case rest {
+    [] -> True
+    [next, ..] if next > first -> False
+    [next, ..rem] -> safe_value(first, next) && is_decreasing(next, rem)
+  }
+}
+
+fn create_possibles(num_list) {
   do_create_possibles(num_list, [num_list], [])
 }
 
-fn do_create_possibles(num_list, possibles, head) {
+fn do_create_possibles(
+  num_list: List(Int),
+  possibles: List(List(Int)),
+  head: List(Int),
+) {
   case num_list, head {
     [], _ -> possibles
     [h, ..t], [] -> do_create_possibles(t, [t, ..possibles], [h])
