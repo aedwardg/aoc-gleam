@@ -1,16 +1,21 @@
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/set
 import gleam/string
 
 import simplifile
+import utils
+
+type Direction {
+  Asc
+  Desc
+}
 
 fn parse() {
   let assert Ok(input) = simplifile.read("src/year2024/day02/input.txt")
 
   input
-  |> string.split("\n")
+  |> utils.trim_split("\n")
   |> list.map(fn(str) {
     str
     |> string.split(" ")
@@ -20,61 +25,46 @@ fn parse() {
 
 fn check_for_safety(num_list) {
   let pairs = list.window_by_2(num_list)
-
-  safe_distance(pairs) && all_asc_or_desc(pairs)
+  safe_distance(pairs)
 }
 
 fn safe_distance(pairs: List(#(Int, Int))) {
-  list.all(pairs, fn(pair) { safe_value(pair.0, pair.1) })
+  list.all(pairs, fn(pair) { safe_value(pair.0, pair.1, Asc) })
+  || list.all(pairs, fn(pair) { safe_value(pair.0, pair.1, Desc) })
 }
 
-fn all_asc_or_desc(pairs: List(#(Int, Int))) {
-  pairs
-  |> list.map(fn(pair) { int.compare(pair.0, pair.1) })
-  |> set.from_list()
-  |> set.size()
-  == 1
+fn safe_value(a, b, direction: Direction) {
+  case direction {
+    Asc -> a - b > 0 && a - b < 4
+    Desc -> a - b < 0 && a - b > -4
+  }
 }
 
-fn safe_value(a, b) {
-  let dist = int.absolute_value(a - b)
-  dist > 0 && dist < 4
+fn create_groups(num_list: List(Int)) {
+  do_create_groups(num_list, [num_list], [])
 }
 
-fn create_possibles(num_list: List(Int)) {
-  do_create_possibles(num_list, [num_list], [])
+fn new_group(head, t) {
+  list.append(list.reverse(head), t)
 }
 
-fn do_create_possibles(num_list, possibles, head) {
+fn do_create_groups(num_list, groups, head) {
   case num_list, head {
-    [], _ -> possibles
-    [h, ..t], [] -> do_create_possibles(t, [t, ..possibles], [h])
+    [], _ -> groups
+    [h, ..t], [] -> do_create_groups(t, [t, ..groups], [h])
     [h, ..t], head ->
-      do_create_possibles(t, [list.append(list.reverse(head), t), ..possibles], [
-        h,
-        ..head
-      ])
+      do_create_groups(t, [new_group(head, t), ..groups], [h, ..head])
   }
 }
 
 fn part_one(input) {
-  input
-  |> list.fold(0, fn(acc, num_list) {
-    case check_for_safety(num_list) {
-      True -> acc + 1
-      False -> acc
-    }
-  })
+  list.count(input, check_for_safety)
 }
 
 fn part_two(input) {
-  input
-  |> list.fold(0, fn(acc, num_list) {
-    let possibles = create_possibles(num_list)
-    case list.any(possibles, check_for_safety) {
-      True -> acc + 1
-      False -> acc
-    }
+  list.count(input, fn(num_list) {
+    let groups = create_groups(num_list)
+    list.any(groups, check_for_safety)
   })
 }
 
