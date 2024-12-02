@@ -10,3 +10,7 @@ pub fn erl_split(
   pattern: String,
   opts: List(SplitOpts),
 ) -> List(String)
+
+pub fn trim_split(string, pattern) {
+  erl_split(string, pattern, [Global, TrimAll])
+}
