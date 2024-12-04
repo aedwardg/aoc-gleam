@@ -40,6 +40,13 @@ fn find_letter(input, letter) {
   |> dict.to_list()
 }
 
+fn xmas_from_xs(xs, input) {
+  use entry <- list.flat_map(xs)
+  let #(#(x, y), _) = entry
+  let next_fns = surrounding()
+  list.map(next_fns, get_next(["M", "A", "S"], x, y, _, input))
+}
+
 fn get_next(chars, x, y, next_fn, map) {
   let coord: #(Int, Int) = next_fn(x, y)
   case chars {
@@ -79,12 +86,7 @@ fn verify_x(tl, tr, bl, br) {
 fn part_one(input) {
   input
   |> find_letter("X")
-  |> list.flat_map(fn(entry) {
-    let #(#(x, y), _) = entry
-    let next_fns = surrounding()
-
-    list.map(next_fns, get_next(["M", "A", "S"], x, y, _, input))
-  })
+  |> xmas_from_xs(input)
   |> list.count(fn(a) { a == True })
 }
 
