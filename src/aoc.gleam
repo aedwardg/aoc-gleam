@@ -1,4 +1,4 @@
-import year2024/day04/solution
+import year2024/day05/solution
 
 pub fn main() {
   solution.run()
