@@ -1,5 +1,6 @@
 import gleam/dict
 import gleam/int
+import gleam/list
 
 pub type SplitOpts {
   Global
@@ -28,4 +29,20 @@ pub fn safe_get(map, key, default) {
     Ok(val) -> val
     Error(Nil) -> default
   }
+}
+
+pub fn to_int_matrix(str, delim_1, delim_2) {
+  str
+  |> trim_split(delim_1)
+  |> list.map(fn(row) {
+    row
+    |> trim_split(delim_2)
+    |> list.map(force_int)
+  })
+}
+
+pub fn to_matrix(str, delim_1, delim_2) {
+  str
+  |> trim_split(delim_1)
+  |> list.map(trim_split(_, delim_2))
 }
