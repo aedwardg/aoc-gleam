@@ -38,14 +38,13 @@ fn concat_digits(prev, val) {
 
 fn count_valid(input, concat) {
   input
-  |> list.fold([], fn(acc, equation) {
+  |> list.fold(0, fn(acc, equation) {
     let possibles = fanout(equation, concat)
     case list.any(possibles, fn(num) { num == equation.0 }) {
-      True -> [equation.0, ..acc]
+      True -> acc + equation.0
       False -> acc
     }
   })
-  |> int.sum()
 }
 
 fn part_one(input) {
