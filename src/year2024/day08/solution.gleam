@@ -18,6 +18,10 @@ type Bounds {
   Bounds(x: #(Int, Int), y: #(Int, Int))
 }
 
+type Distance {
+  Distance(x: Int, y: Int)
+}
+
 fn parse() {
   let assert Ok(input) = simplifile.read("src/year2024/day08/input.txt")
 
@@ -53,17 +57,17 @@ fn gen_antinodes(locs_list: List(List(Loc)), bounds: Bounds, resonant: Bool) {
   use locs <- list.flat_map(locs_list)
   use #(l1, l2) <- list.flat_map(list.combination_pairs(locs))
 
-  let dist_x = int.absolute_value(l1.x - l2.x)
-  let dist_y = int.absolute_value(l1.y - l2.y)
-  let a1 = new_loc(l1.x, l2.x, l1.y, l2.y, dist_x, dist_y)
-  let a2 = new_loc(l2.x, l1.x, l2.y, l1.y, dist_x, dist_y)
+  let dist =
+    Distance(int.absolute_value(l1.x - l2.x), int.absolute_value(l1.y - l2.y))
+  let a1 = new_loc(l1.x, l2.x, l1.y, l2.y, dist)
+  let a2 = new_loc(l2.x, l1.x, l2.y, l1.y, dist)
 
   case resonant {
     False -> list.filter([a1, a2], within_bounds(_, bounds))
     True -> {
       [l1, l2]
-      |> find_resonant(l1, a1, bounds, #(dist_x, dist_y))
-      |> find_resonant(l2, a2, bounds, #(dist_x, dist_y))
+      |> find_resonant(l1, a1, bounds, dist)
+      |> find_resonant(l2, a2, bounds, dist)
     }
   }
 }
@@ -73,8 +77,8 @@ fn new_point(a, b, dist) {
   a + dist
 }
 
-fn new_loc(x1, x2, y1, y2, dist_x, dist_y) {
-  Loc(new_point(x1, x2, dist_x), new_point(y1, y2, dist_y))
+fn new_loc(x1, x2, y1, y2, dist: Distance) {
+  Loc(new_point(x1, x2, dist.x), new_point(y1, y2, dist.y))
 }
 
 fn within_bounds(loc: Loc, bounds: Bounds) {
@@ -84,10 +88,10 @@ fn within_bounds(loc: Loc, bounds: Bounds) {
   && loc.y < bounds.y.1
 }
 
-fn find_resonant(acc, prev: Loc, cur: Loc, bounds: Bounds, dist: #(Int, Int)) {
+fn find_resonant(acc, prev: Loc, cur: Loc, bounds: Bounds, dist) {
   use <- bool.guard(!within_bounds(cur, bounds), acc)
 
-  let new_cur = new_loc(cur.x, prev.x, cur.y, prev.y, dist.0, dist.1)
+  let new_cur = new_loc(cur.x, prev.x, cur.y, prev.y, dist)
   find_resonant([cur, ..acc], cur, new_cur, bounds, dist)
 }
 
