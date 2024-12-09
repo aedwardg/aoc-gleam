@@ -15,45 +15,45 @@ fn parse() {
   |> list.filter_map(int.parse)
 }
 
-fn to_disk_map(input, i, file_index, blocks, spaces) {
+fn to_disk_map(input, i, file_index, files, spaces) {
   case input {
-    [] -> #(blocks, list.reverse(spaces))
+    [] -> #(files, list.reverse(spaces))
     [h, ..tail] ->
       case int.is_even(i) {
-        False -> to_disk_map(tail, i + 1, file_index, blocks, [h, ..spaces])
+        False -> to_disk_map(tail, i + 1, file_index, files, [h, ..spaces])
         True ->
           to_disk_map(
             tail,
             i + 1,
             file_index + 1,
-            [list.repeat(int.to_string(file_index), h), ..blocks],
+            [list.repeat(int.to_string(file_index), h), ..files],
             spaces,
           )
       }
   }
 }
 
-fn fill(blocks: List(List(String)), spaces, files: List(String), acc) {
-  case blocks, spaces {
+fn fill(files: List(List(String)), spaces, blocks: List(String), acc) {
+  case files, spaces {
     [], _ -> acc
-    [b, ..t], [] -> fill(t, spaces, files, [b, ..acc])
-    [b, ..bs], [sp, ..sps] ->
-      fill(bs, sps, list.drop(files, sp), [
-        list.reverse(list.take(files, sp)),
-        b,
+    [f, ..t], [] -> fill(t, spaces, blocks, [f, ..acc])
+    [f, ..fs], [sp, ..sps] ->
+      fill(fs, sps, list.drop(blocks, sp), [
+        list.reverse(list.take(blocks, sp)),
+        f,
         ..acc
       ])
   }
 }
 
 fn part_one(input) {
-  let #(blocks, spaces) = to_disk_map(input, 0, 0, [], [])
-  let files = list.flatten(blocks)
-  let blocks = list.reverse(blocks)
+  let #(files, spaces) = to_disk_map(input, 0, 0, [], [])
+  let blocks = list.flatten(files)
+  let files = list.reverse(files)
   let num_spaces = int.sum(spaces)
 
-  blocks
-  |> fill(spaces, files, [])
+  files
+  |> fill(spaces, blocks, [])
   |> list.flatten()
   |> list.drop(num_spaces)
   |> list.reverse()
@@ -61,6 +61,7 @@ fn part_one(input) {
 }
 
 // fn part_two(input) {
+//   let #(files, spaces) = to_disk_map(input, 0, 0, [], [])
 // }
 
 pub fn run() {
