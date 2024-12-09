@@ -1,9 +1,10 @@
 import gleam/dict
 import gleam/int
 import gleam/io
-import gleam/iterator
 import gleam/list
 import gleam/string
+
+import gleam/yielder
 
 import simplifile
 
@@ -64,13 +65,13 @@ fn create_path(wire) {
 
 fn add_points(path, dir, begin: Point, steps, amt) {
   let range = case dir {
-    Left -> iterator.range(begin.x, begin.x - amt)
-    Right -> iterator.range(begin.x, begin.x + amt)
-    Up -> iterator.range(begin.y, begin.y + amt)
-    Down -> iterator.range(begin.y, begin.y - amt)
+    Left -> yielder.range(begin.x, begin.x - amt)
+    Right -> yielder.range(begin.x, begin.x + amt)
+    Up -> yielder.range(begin.y, begin.y + amt)
+    Down -> yielder.range(begin.y, begin.y - amt)
   }
 
-  iterator.fold(range, path, fn(acc, loc) {
+  yielder.fold(range, path, fn(acc, loc) {
     case dir {
       Left | Right -> add_points_x_axis(acc, loc, begin, steps)
       Up | Down -> add_points_y_axis(acc, loc, begin, steps)

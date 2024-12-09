@@ -2,7 +2,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{Some}
-import gleam/regex.{Match}
+import gleam/regexp.{Match}
 
 import simplifile
 import utils.{Global, TrimAll}
@@ -45,7 +45,7 @@ fn extract_match(m, s) {
 
 fn sum_first_and_last(input, pattern) {
   list.fold(input, 0, fn(acc, s) {
-    let assert [Match(first_match, first_sub), ..rest] = regex.scan(pattern, s)
+    let assert [Match(first_match, first_sub), ..rest] = regexp.scan(pattern, s)
 
     let first = extract_match(first_match, first_sub)
 
@@ -61,12 +61,12 @@ fn sum_first_and_last(input, pattern) {
 }
 
 fn part_one(input) {
-  let assert Ok(pattern) = regex.from_string(digit)
+  let assert Ok(pattern) = regexp.from_string(digit)
   sum_first_and_last(input, pattern)
 }
 
 fn part_two(input) {
-  let assert Ok(pattern) = regex.from_string(all_digits)
+  let assert Ok(pattern) = regexp.from_string(all_digits)
   sum_first_and_last(input, pattern)
 }
 

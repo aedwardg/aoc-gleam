@@ -1,13 +1,13 @@
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/regex
+import gleam/regexp
 import gleam/string
 
 import simplifile
 
 fn parse() {
-  let assert Ok(re) = regex.from_string("[ \\-:]")
+  let assert Ok(re) = regexp.from_string("[ \\-:]")
   let assert Ok(input) = simplifile.read("src/year2020/day02/input.txt")
 
   input
@@ -21,7 +21,8 @@ fn parse() {
 }
 
 fn transform(str, re) {
-  let assert [low, high, char, _blank, pw] = regex.split(with: re, content: str)
+  let assert [low, high, char, _blank, pw] =
+    regexp.split(with: re, content: str)
   let assert Ok(low) = int.parse(low)
   let assert Ok(high) = int.parse(high)
   #(low, high, char, pw)

@@ -9,7 +9,7 @@ fn parse() {
   let assert Ok(input) = simplifile.read("src/year2022/day03/input.txt")
 
   input
-  |> string.trim_right()
+  |> string.trim_end()
   |> string.split("\n")
 }
 
